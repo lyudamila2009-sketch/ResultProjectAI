@@ -20,6 +20,9 @@ venv/
 *.swp
 *.swo
 
+# GigaCode
+.gigacode/
+
 # OS
 .DS_Store
 
