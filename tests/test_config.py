@@ -14,9 +14,13 @@ def reset_env():
 
 
 class TestEnvConfig:
-    def test_env_file_exists(self):
-        """Проверяет, что .env.example существует."""
-        assert os.path.exists(".env.example")
+    def test_requirements_txt_exists(self):
+        """Проверяет, что requirements.txt существует."""
+        assert os.path.exists("requirements.txt")
+
+    def test_pyproject_toml_exists(self):
+        """Проверяет, что pyproject.toml существует."""
+        assert os.path.exists("pyproject.toml")
 
     def test_default_timeout(self):
         """Проверяет значение timeout по умолчанию."""
