@@ -10,10 +10,9 @@
 """
 import asyncio
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock, patch
 from config.settings import AppSettings
-from llm.client import LLMClient, LLMConfig
-from llm.schemas import ChatResponse
+from llm.client import LLMClient
 
 
 @pytest.fixture(autouse=True)

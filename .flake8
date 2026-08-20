@@ -1,0 +1,6 @@
+[flake8]
+exclude = .venv,.git,__pycache__,build,dist,migrations,.egg-info,.tox,.pytest_cache
+max-line-length = 120
+select = E9,F63,F7,F82,W,F401,F811
+show-source = true
+statistics = true

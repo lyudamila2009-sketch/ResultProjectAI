@@ -9,6 +9,3 @@ max-line-length=120
 
 [BASIC]
 good-names=i,j,k,v,e,f,x,y,arg,name,_,**kwargs
-
-[SIMILARITIES]
-min-similar-lines=4

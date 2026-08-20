@@ -8,6 +8,7 @@
 """
 import os
 import pytest
+from config.settings import AppSettings
 
 
 @pytest.fixture(autouse=True)
