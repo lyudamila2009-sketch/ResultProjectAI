@@ -9,11 +9,8 @@ import pytest
 from unittest.mock import AsyncMock
 from fastapi.testclient import TestClient
 from main import create_app
-from services.chat import ChatService, ChatRequest, ChatResponse
-from api.router import set_chat_service
+from services.chat import ChatResponse, ChatService
 
-
-# --- Фикстуры ---
 
 @pytest.fixture
 def mock_llm_client():
@@ -29,13 +26,19 @@ def mock_llm_client():
 @pytest.fixture
 def initialized_client(mock_llm_client):
     """
-    Создаёт TestClient с полностью инициализированным сервисом (включая LLM-клиент).
-    Заменяет стандартный fixture `client`, так как TestClient не запускает startup-события.
+    Создаёт TestClient с полностью инициализированным сервисом.
+    Использует app.state.chat_service для передачи сервиса.
+    После теста сервис очищается.
     """
-    service = ChatService(llm_client=mock_llm_client, fallback_message="Fallback")
+    service = ChatService(
+        llm_client=mock_llm_client,
+        fallback_message="Fallback",
+    )
     app = create_app()
-    set_chat_service(service)
-    return TestClient(app)
+    app.state.chat_service = service
+    client = TestClient(app)
+    yield client
+    app.state.chat_service = None
 
 
 @pytest.fixture
@@ -45,10 +48,9 @@ def client():
     Используется для тестирования поведения при отсутствии сервиса (503).
     """
     app = create_app()
-    return TestClient(app)
+    test_client = TestClient(app)
+    yield test_client
 
-
-# --- Тесты health-check ---
 
 class TestHealthEndpoint:
     """Тесты endpoint GET /health."""
@@ -64,8 +66,6 @@ class TestHealthEndpoint:
         response = client.get("/health")
         assert "application/json" in response.headers["content-type"]
 
-
-# --- Тесты чат-endpoint ---
 
 class TestChatEndpoint:
     """Тесты POST /chat."""
@@ -98,4 +98,12 @@ class TestChatEndpoint:
     def test_chat_message_too_long(self, initialized_client):
         """Проверяет возврат 422 при сообщении длиннее 1000 символов (pydantic валидация max_length)."""
         response = initialized_client.post("/chat", json={"message": "x" * 2000})
+        assert response.status_code == 422
+
+    def test_chat_whitespace_only_message(self, initialized_client):
+        """
+        Проверяет, что сообщение из одних пробелов отклоняется валидатором.
+        Раньше такое сообщение проходило валидацию и попадало в LLM.
+        """
+        response = initialized_client.post("/chat", json={"message": "   "})
         assert response.status_code == 422

@@ -1,9 +1,9 @@
+# Runtime dependencies — синхронизировано с pyproject.toml
 fastapi>=0.100.0
 pydantic>=2.0.0
 uvicorn>=0.23.0
-pyyaml>=6.0
-python-dotenv>=1.0.0
 gigachat>=0.2.0
+python-dotenv>=1.0.0
 pydantic-settings>=2.0.0
 
 # Testing
