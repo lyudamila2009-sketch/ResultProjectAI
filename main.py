@@ -10,12 +10,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Response
 
-from config.settings import AppSettings, get_settings
-from config.logging_config import setup_logging
-from config.correlation import setup_request_id_logging
 from llm.client import LLMClient
 from services.chat import ChatService
-from api.router import router as chat_router, get_chat_service
 
 logger = logging.getLogger(__name__)
 
